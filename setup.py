@@ -5,27 +5,31 @@ import os
 with open("README.rst", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-with open(os.path.join("optical_instruments_for_merlict", "version.py")) as f:
+with open(
+    os.path.join("computer_aided_design_for_optical_instruments", "version.py")
+) as f:
     txt = f.read()
     last_line = txt.splitlines()[-1]
     version_string = last_line.split()[-1]
     version = version_string.strip("\"'")
 
 setuptools.setup(
-    name="optical_instruments_for_merlict",
+    name="computer_aided_design_for_optical_instruments",
     version=version,
-    description=("Create complex sceneries of optical instruments in merlict"),
+    description=(
+        "A python package for computer-aided design (CAD) for optical instruments"
+    ),
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    url="https://github.com/cherenkov-plenoscope/optical_instruments_for_merlict",
+    url="https://github.com/cherenkov-plenoscope/computer_aided_design_for_optical_instruments",
     author="Sebastian Achim Mueller",
-    author_email="Sebastian Achim Mueller@mail",
+    author_email="sebastian-achim.mueller@mpi-hd.mpg.de",
     packages=[
-        "optical_instruments_for_merlict",
-        "optical_instruments_for_merlict.segmented_mirror",
-        "optical_instruments_for_merlict.light_field_camera",
+        "computer_aided_design_for_optical_instruments",
+        "computer_aided_design_for_optical_instruments.segmented_mirror",
+        "computer_aided_design_for_optical_instruments.light_field_camera",
     ],
-    package_data={"optical_instruments_for_merlict": []},
+    package_data={"computer_aided_design_for_optical_instruments": []},
     install_requires=[
         "optic_object_wavefronts",
         "merlict",

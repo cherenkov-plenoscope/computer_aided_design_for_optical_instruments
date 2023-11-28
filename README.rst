@@ -1,15 +1,16 @@
-###############################
-optical_instruments_for_merlict
-###############################
+###################################################
+Computer-aided design (CAD) for optical instruments
+###################################################
 |TestStatus| |PyPiStatus| |BlackStyle| |BlackPackStyle| |MITLicenseBadge|
 
-Lorem ipsum...
+A python package.
 
-.. |TestStatus| image:: https://github.com/cherenkov-plenoscope/optical_instruments_for_merlict/actions/workflows/test.yml/badge.svg?branch=main
-    :target: https://github.com/cherenkov-plenoscope/optical_instruments_for_merlict/actions/workflows/test.yml
 
-.. |PyPiStatus| image:: https://img.shields.io/pypi/v/optical_instruments_for_merlict
-    :target: https://pypi.org/project/optical_instruments_for_merlict
+.. |TestStatus| image:: https://github.com/cherenkov-plenoscope/computer_aided_design_for_optical_instruments/actions/workflows/test.yml/badge.svg?branch=main
+    :target: https://github.com/cherenkov-plenoscope/computer_aided_design_for_optical_instruments/actions/workflows/test.yml
+
+.. |PyPiStatus| image:: https://img.shields.io/pypi/v/computer_aided_design_for_optical_instruments
+    :target: https://pypi.org/project/computer_aided_design_for_optical_instruments
 
 .. |BlackStyle| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
