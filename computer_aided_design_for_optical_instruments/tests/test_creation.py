@@ -6,7 +6,7 @@ import scipy
 from scipy import spatial
 import merlict
 import optic_object_wavefronts as optcad
-import optical_instruments_for_merlict as optmli
+import computer_aided_design_for_optical_instruments as cadoptins
 import triangle_mesh_io
 from optic_object_wavefronts import plot
 import sebastians_matplotlib_addons as sebplt
@@ -38,7 +38,7 @@ aperture_outer_polygon = optcad.geometry.regular_polygon.make_vertices_xy(
     rot=np.pi / 6,
 )
 
-scenery = optmli.segmented_mirror.add_to_frame_in_scenery(
+scenery = cadoptins.segmented_mirror.add_to_frame_in_scenery(
     frame=frame,
     scenery=scenery,
     focal_length=2000e-3,
@@ -93,7 +93,7 @@ field_of_view_polygon = optcad.geometry.regular_polygon.make_vertices_xy(
     fn=5,
 )
 
-lfs = optmli.light_field_camera.make_geometry(
+lfs = cadoptins.light_field_camera.make_geometry(
     primary_optics_focal_length=106.5,
     primary_optics_diameter=71,
     camera_field_of_view_polygon=field_of_view_polygon,
@@ -154,7 +154,7 @@ lfc_frame = {
 }
 scenery["geometry"]["relations"]["children"].append(lfc_frame)
 
-scenery = optmli.light_field_camera.add_to_frame_in_scenery(
+scenery = cadoptins.light_field_camera.add_to_frame_in_scenery(
     frame=lfc_frame,
     scenery=scenery,
     light_field_camera_geometry=lfs,
