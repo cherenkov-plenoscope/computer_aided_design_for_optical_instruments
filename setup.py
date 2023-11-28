@@ -14,7 +14,7 @@ with open(os.path.join("optical_instruments_for_merlict", "version.py")) as f:
 setuptools.setup(
     name="optical_instruments_for_merlict",
     version=version,
-    description=("This is optical_instruments_for_merlict."),
+    description=("Create complex sceneries of optical instruments in merlict"),
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/cherenkov-plenoscope/optical_instruments_for_merlict",
@@ -22,9 +22,14 @@ setuptools.setup(
     author_email="Sebastian Achim Mueller@mail",
     packages=[
         "optical_instruments_for_merlict",
+        "optical_instruments_for_merlict.segmented_mirror",
+        "optical_instruments_for_merlict.light_field_camera",
     ],
     package_data={"optical_instruments_for_merlict": []},
-    install_requires=[],
+    install_requires=[
+        "optic_object_wavefronts",
+        "merlict",
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
