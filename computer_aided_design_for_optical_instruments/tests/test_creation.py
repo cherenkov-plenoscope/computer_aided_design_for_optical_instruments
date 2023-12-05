@@ -24,46 +24,47 @@ frame = {
 scenery["geometry"]["relations"]["children"].append(frame)
 
 
-scenery["materials"]["surfaces"][
-    "perfect_mirror"
-] = merlict.materials.surfaces.init("perfect_absorber/rgb_210_210_210")
-scenery["materials"]["surfaces"][
-    "perfect_absorber"
-] = merlict.materials.surfaces.init("perfect_absorber/rgb_30_30_30")
-
-
 aperture_outer_polygon = optcad.geometry.regular_polygon.make_vertices_xy(
     outer_radius=355e-3,
     fn=6,
     rot=np.pi / 6,
 )
 
-scenery = cadoptins.segmented_mirror.add_to_frame_in_scenery(
+mirror_objs = cadoptins.segmented_mirror.add_to_frame(
     frame=frame,
-    scenery=scenery,
     focal_length=2000e-3,
     aperture_outer_polygon=aperture_outer_polygon,
     aperture_inner_polygon=None,
     facet_inner_hex_radius=54e-3,
     gap_between_facets=4e-3,
+    facet_body_width=15e-3,
     davies_cotton_weight=0.0,
     parabola_weight=0.0,
     sphere_weight=1.0,
-    mean_distance_of_facet_centers_to_focal_point_is_focal_length=False,
     facet_rotation="sphere",
-    outer_medium="vacuum",
-    inner_medium="vacuum",
-    facet_surface_mirror="perfect_mirror",
-    facet_surface_body="perfect_absorber",
-    ref="a",
+    mean_distance_of_facet_centers_to_focal_point_is_focal_length=False,
+    boundary_layer_facet_front="facet/front",
+    boundary_layer_facet_body="facet/body",
+    ref="mirror",
     facet_fn=3,
-    facet_body_width=15e-3,
 )
+scenery["geometry"]["objects"].update(mirror_objs)
 
-for objkey in scenery["geometry"]["objects"]:
-    scenery["geometry"]["objects"][objkey] = optcad.export.reduce_mesh_to_obj(
-        scenery["geometry"]["objects"][objkey]
-    )
+
+scenery["materials"]["surfaces"][
+    "perfect_mirror"
+] = merlict.materials.surfaces.init("perfect_absorber/rgb_210_210_210")
+scenery["materials"]["surfaces"][
+    "perfect_absorber"
+] = merlict.materials.surfaces.init("perfect_absorber/rgb_30_30_30")
+scenery["materials"]["boundary_layers"]["mirror/facet/front"] = {
+    "inner": {"medium": "vacuum", "surface": "perfect_absorber"},
+    "outer": {"medium": "vacuum", "surface": "perfect_mirror"},
+}
+scenery["materials"]["boundary_layers"]["mirror/facet/body"] = {
+    "inner": {"medium": "vacuum", "surface": "perfect_absorber"},
+    "outer": {"medium": "vacuum", "surface": "perfect_absorber"},
+}
 
 merlict.scenery.write_tar(sceneryPy=scenery, path="segmir.tar")
 
@@ -153,9 +154,3 @@ lfc_frame = {
     "children": [],
 }
 scenery["geometry"]["relations"]["children"].append(lfc_frame)
-
-scenery = cadoptins.light_field_camera.add_to_frame_in_scenery(
-    frame=lfc_frame,
-    scenery=scenery,
-    light_field_camera_geometry=lfs,
-)

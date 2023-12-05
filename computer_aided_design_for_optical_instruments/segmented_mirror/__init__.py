@@ -5,6 +5,7 @@ import numpy as np
 import copy
 import optic_object_wavefronts as optcad
 import merlict
+import posixpath
 
 
 def make_example_config_heritage():
@@ -19,17 +20,15 @@ def make_example_config_heritage():
     }
 
 
-def add_to_frame_in_scenery_heritage(
+def add_to_frame_heritage(
     frame,
     scenery,
     config,
-    outer_medium="vacuum",
-    inner_medium="vacuum",
-    facet_surface_mirror="perfect_mirror",
-    facet_surface_body="perfect_absorber",
+    facet_body_width,
+    boundary_layer_facet_front="facet/front",
+    boundary_layer_facet_body="facet/body",
     facet_fn=7,
-    facet_body_width=0.0,
-    ref="a",
+    ref="segmented_mirror",
 ):
     a = config["DaviesCotton_over_parabolic_mixing_factor"]
 
@@ -79,19 +78,16 @@ def add_to_frame_in_scenery_heritage(
         sphere_weight=0.0,
         mean_distance_of_facet_centers_to_focal_point_is_focal_length=True,
         facet_rotation="individual",
-        outer_medium=outer_medium,
-        inner_medium=outer_medium,
-        facet_surface_mirror=facet_surface_mirror,
-        facet_surface_body=facet_surface_body,
+        boundary_layer_facet_front=boundary_layer_facet_front,
+        boundary_layer_facet_body=boundary_layer_facet_body,
         facet_fn=facet_fn,
         facet_body_width=facet_body_width,
         ref=ref,
     )
 
 
-def add_to_frame_in_scenery(
+def add_to_frame(
     frame,
-    scenery,
     focal_length,
     aperture_outer_polygon,
     aperture_inner_polygon,
@@ -102,21 +98,19 @@ def add_to_frame_in_scenery(
     sphere_weight,
     mean_distance_of_facet_centers_to_focal_point_is_focal_length,
     facet_rotation,
-    outer_medium="vacuum",
-    inner_medium="vacuum",
-    facet_surface_mirror="perfect_mirror",
-    facet_surface_body="perfect_absorber",
+    facet_body_width,
+    boundary_layer_facet_front="facet/front",
+    boundary_layer_facet_body="facet/body",
     facet_fn=7,
-    facet_body_width=0.0,
-    ref="a",
+    ref="segmented_mirror",
 ):
     """
     Parameters
     ----------
     frame : dict
-        A frame in the scenery.
-    scenery : dict
-        The scenery.
+        A frame in the geometry.
+    geometry : dict
+        The geometry.
     focal_length : float
         Distance from aperture's principal plane where image forms.
     aperture_outer_polygon : dict
@@ -137,16 +131,7 @@ def add_to_frame_in_scenery(
         Weight 0-1,
     facet_rotation : str
         How to rotate the facets.
-    outer_medium : str
-        Key of the outer medium sourroundung the mirror.
-    inner_medium : str
-        Key of the inner medium inside the facets.
-    facet_surface_mirror : str
-        Key of the facets working-surface.
-    facet_surface_body : str
-        Key of the facets body surface.
     facet_body_width : float
-        If 0, the facets do not have bodys but only the working surface.
         Smallest width of facet's body from back to working-surface.
     facet_fn : int
         Density of vertices and faces in facet.
@@ -160,43 +145,21 @@ def add_to_frame_in_scenery(
     facet_curvature_radius = 2.0 * focal_length
     facet_object_key = ref + "facet"
 
-    scenery["materials"]["boundary_layers"][ref + "f"] = {
-        "inner": {"medium": inner_medium, "surface": facet_surface_body},
-        "outer": {"medium": outer_medium, "surface": facet_surface_mirror},
+    facet = optcad.primitives.spherical_planar_lens_hexagonal.init(
+        outer_radius=facet_outer_radius,
+        curvature_radius=facet_curvature_radius,
+        width=facet_body_width,
+        fn=facet_fn,
+        ref="facet",
+    )
+    facet_mtl_to_boundary_layers_map = {
+        "facet/front": posixpath.join(ref, boundary_layer_facet_front),
+        "facet/back": posixpath.join(ref, boundary_layer_facet_body),
+        "facet/side": posixpath.join(ref, boundary_layer_facet_body),
     }
 
-    if facet_body_width > 0.0:
-        facet = optcad.primitives.spherical_planar_lens_hexagonal.init(
-            outer_radius=facet_outer_radius,
-            curvature_radius=facet_curvature_radius,
-            width=facet_body_width,
-            fn=facet_fn,
-            ref="facet",
-        )
-        facet_mtl_to_boundary_layers_map = {
-            "facet/front": ref + "f",
-            "facet/back": ref + "b",
-            "facet/side": ref + "b",
-        }
-        scenery["materials"]["boundary_layers"][ref + "b"] = {
-            "inner": {"medium": inner_medium, "surface": facet_surface_body},
-            "outer": {"medium": outer_medium, "surface": facet_surface_body},
-        }
-    else:
-        facet = optcad.primitives.spherical_cap_hexagonal.init(
-            outer_radius=facet_outer_radius,
-            curvature_radius=facet_curvature_radius,
-            fn=facet_fn,
-            ref="facet",
-        )
-        facet_mtl_to_boundary_layers_map = {
-            "facet": ref + "f",
-        }
-
-    # add objects
-    # -----------
-    assert facet_object_key not in scenery["geometry"]["objects"]
-    scenery["geometry"]["objects"][facet_object_key] = facet
+    objs = {}
+    objs[facet_object_key] = optcad.export.reduce_mesh_to_obj(facet)
 
     grid_spacing = (2 * facet_inner_hex_radius) + gap_between_facets
 
@@ -228,7 +191,6 @@ def add_to_frame_in_scenery(
 
     # orientation
     # -----------
-
     facet_id = 0
     for fkey in facet_centers:
         if facet_rotation == "individual":
@@ -255,7 +217,7 @@ def add_to_frame_in_scenery(
         frame["children"].append(child)
         facet_id += 1
 
-    return scenery
+    return objs
 
 
 def init_facet_centers_xy(

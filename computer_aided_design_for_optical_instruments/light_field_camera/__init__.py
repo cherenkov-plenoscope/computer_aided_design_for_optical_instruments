@@ -208,10 +208,13 @@ def make_geometry(
     return c
 
 
-def add_to_frame_in_scenery(
+def add_to_frame(
     frame,
-    scenery,
     light_field_camera_geometry,
+    boundary_layer_eye_lens_working="eye/lens/working",
+    boundary_layer_eye_lens_body="eye/lens/body",
+    boundary_layer_eye_photosesnsor="eye/photosensor",
+    ref="light_field_camera",
 ):
     """
     Parameters
@@ -219,14 +222,13 @@ def add_to_frame_in_scenery(
     frame : dict
         This light-field camera will be made a child of this frame. The frame
         is itself a child of scenery["geometry"]["relations"].
-    scenery : dict
-        A merlict scenery in 'sceneryPy' representation.
     light_field_camera_geometry : dict
         The light-field camera's geometry. A dict with all the relevant
         positions and orientations pre calculated.
     """
+    objs = {}
 
-    return scenery
+    return objs
 
 
 """
