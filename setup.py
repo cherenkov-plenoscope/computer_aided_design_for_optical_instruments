@@ -31,7 +31,7 @@ setuptools.setup(
     ],
     package_data={"computer_aided_design_for_optical_instruments": []},
     install_requires=[
-        "optic_object_wavefronts",
+        "optic_object_wavefronts>=1.3.7",
         "merlict",
     ],
     classifiers=[
