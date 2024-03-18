@@ -101,6 +101,7 @@ def add_to_frame(
     facet_body_width,
     boundary_layer_facet_front="facet/front",
     boundary_layer_facet_body="facet/body",
+    facet_id_start=0,
     facet_fn=7,
     ref="segmented_mirror",
 ):
@@ -137,10 +138,13 @@ def add_to_frame(
         Density of vertices and faces in facet.
     ref : str
         A name to distinguish this mirror from others.
+    facet_id_start : int (default 0)
+        Begin of object reference ids.
     """
 
     # facet
     # -----
+    assert facet_id_start >= 0
     facet_outer_radius = facet_inner_hex_radius * (2.0 / np.sqrt(3.0))
     facet_curvature_radius = 2.0 * focal_length
     facet_object_key = ref + "facet"
@@ -153,9 +157,9 @@ def add_to_frame(
         ref="facet",
     )
     facet_mtl_to_boundary_layers_map = {
-        "facet/front": posixpath.join(ref, boundary_layer_facet_front),
-        "facet/back": posixpath.join(ref, boundary_layer_facet_body),
-        "facet/side": posixpath.join(ref, boundary_layer_facet_body),
+        "facet/front": boundary_layer_facet_front,
+        "facet/back": boundary_layer_facet_body,
+        "facet/side": boundary_layer_facet_body,
     }
 
     objs = {}
@@ -191,7 +195,7 @@ def add_to_frame(
 
     # orientation
     # -----------
-    facet_id = 0
+    facet_id = int(facet_id_start)
     for fkey in facet_centers:
         if facet_rotation == "individual":
             focal_point = [0, 0, focal_length]
