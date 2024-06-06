@@ -144,6 +144,7 @@ def add_to_frame(
 
     # facet
     # -----
+    pp = posixpath
     assert facet_id_start >= 0
     facet_outer_radius = facet_inner_hex_radius * (2.0 / np.sqrt(3.0))
     facet_curvature_radius = 2.0 * focal_length
@@ -157,9 +158,9 @@ def add_to_frame(
         ref="facet",
     )
     facet_mtl_to_boundary_layers_map = {
-        "facet/front": boundary_layer_facet_front,
-        "facet/back": boundary_layer_facet_body,
-        "facet/side": boundary_layer_facet_body,
+        pp.join("facet", "front"): pp.join(ref, boundary_layer_facet_front),
+        pp.join("facet", "back"): pp.join(ref, boundary_layer_facet_body),
+        pp.join("facet", "side"): pp.join(ref, boundary_layer_facet_body),
     }
 
     objs = {}
